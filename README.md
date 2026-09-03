@@ -32,7 +32,7 @@ Este projeto foi construído focando na resolução de problemas reais de uso de
 
 ## 📱 Como testar o aplicativo
 
-1. Acesse o link oficial: [LF Sábado Manager](COLOQUE_SEU_LINK_DO_GITHUB_PAGES_AQUI)
+1. Acesse o link oficial: [LF Sábado Manager](https://raneeralmeida.github.io/lf-sabado-gerente/)
 2. **No Computador:** Pressione `F12` e ative a visualização de dispositivos móveis (Device Toolbar) para uma experiência ideal.
 3. **No Celular:** Abra o link pelo navegador (Chrome/Safari). Uma notificação de instalação do aplicativo surgirá após alguns segundos. Ao instalar, o aplicativo passa a rodar em tela cheia e sem depender de internet.
 
