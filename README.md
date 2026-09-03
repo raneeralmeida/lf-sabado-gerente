@@ -1,6 +1,6 @@
 # ⚽ Gerente LF Sábado | PWA de Gestão Esportiva
 
-👉 [ACESSAR O APLICATIVO ONLINE](COLOQUE_SEU_LINK_DO_GITHUB_PAGES_AQUI)
+👉 [ACESSAR O APLICATIVO ONLINE](https://raneeralmeida.github.io/lf-sabado-gerente/)
 
 Uma aplicação Web Progressiva (PWA) desenvolvida do zero para automatizar, organizar e gerenciar partidas de futebol amador. O projeto substitui o tradicional "caderninho" por um sistema inteligente, rápido e projetado para a usabilidade à beira da quadra.
 
