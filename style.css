@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Teko:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Cores da Identidade Visual (Verde Oliva/Musgo da Logo) */
+    --c-brand: #627244;       
+    --c-brand-light: #8ba360; 
+    --c-brand-dark: #3c4629;  
+    
+    /* Efeitos de Vidro */
+    --c-glass: rgba(15, 15, 18, 0.55);
+    --c-glass-border: rgba(255, 255, 255, 0.08);
+}
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background-color: #050505; /* Preto absoluto */
+    color: #f4f4f5;
+    -webkit-tap-highlight-color: transparent;
+    padding-bottom: 80px; 
+    overflow-x: hidden;
+}
+
+/* Focos de luz no fundo da tela para dar profundidade ao vidro */
+.bg-orb-1 {
+    position: fixed; top: -150px; left: -100px; width: 400px; height: 400px;
+    background: var(--c-brand); filter: blur(120px); opacity: 0.25; z-index: -1; pointer-events: none;
+}
+.bg-orb-2 {
+    position: fixed; bottom: -100px; right: -50px; width: 300px; height: 300px;
+    background: var(--c-brand-light); filter: blur(100px); opacity: 0.15; z-index: -1; pointer-events: none;
+}
+
+/* Efeito Principal de Vidro Fosco */
+.glass-panel {
+    background: var(--c-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--c-glass-border);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    border-radius: 12px;
+}
+
+/* Botões Principais */
+.btn-primary {
+    background: linear-gradient(135deg, var(--c-brand-light), var(--c-brand));
+    color: #050505;
+    box-shadow: 0 4px 15px rgba(98, 114, 68, 0.3);
+    border: none;
+}
+.btn-primary:hover { filter: brightness(1.1); }
+
+/* Classes Utilitárias Customizadas */
+.text-brand { color: var(--c-brand-light); }
+.border-brand { border-color: var(--c-brand); }
+.bg-brand-translucent { background-color: rgba(98, 114, 68, 0.15); }
+
+.font-teko { font-family: 'Teko', sans-serif; }
+
+/* Letreiro do Placar */
+.led-text {
+    font-family: 'Teko', sans-serif;
+    color: var(--c-brand-light);
+    text-shadow: 0 0 25px rgba(139, 163, 96, 0.6);
+    line-height: 1;
+}
+
+/* Cartões de Jogadores */
+.player-card { transition: all 0.2s ease; }
+.player-card.selected {
+    border-color: var(--c-brand-light);
+    background: rgba(139, 163, 96, 0.1);
+    box-shadow: inset 0 0 15px rgba(139, 163, 96, 0.05);
+}
+
+.position-badge {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+/* Animações */
+@keyframes zoomEntrada {
+    0% { transform: scale(0.3); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.animar-logo { animation: zoomEntrada 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes textoSubindo {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+.animar-texto { animation: textoSubindo 0.6s ease-out forwards; animation-delay: 0.2s; opacity: 0; }

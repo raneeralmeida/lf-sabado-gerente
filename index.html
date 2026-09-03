@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Sorteio de Times - Futebol</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen flex flex-col overflow-hidden relative">
+
+    <div class="bg-orb-1"></div>
+    <div class="bg-orb-2"></div>
+
+    <div id="install-banner" class="hidden fixed top-0 left-0 right-0 bg-[#050505] text-brand p-4 z-[200] flex justify-between items-center border-b border-brand">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-download text-2xl"></i>
+            <div>
+                <p class="font-bold text-sm leading-tight uppercase font-teko text-lg text-white">Instalar App Oficial</p>
+                <p class="text-[11px] font-bold opacity-80 uppercase">Modo Offline Disponível</p>
+            </div>
+        </div>
+        <div class="flex gap-2 items-center">
+            <button id="btn-install" class="btn-primary px-3 py-1.5 rounded font-bold text-xs uppercase shadow active:scale-95 transition-transform">Instalar</button>
+            <button onclick="fecharBannerInstall()" class="text-zinc-500 hover:text-white px-2 py-1 text-lg leading-none">&times;</button>
+        </div>
+    </div>
+
+    <!-- TELA DE ABERTURA -->
+    <div id="splash-screen" class="fixed inset-0 bg-[#050505] z-[100] transition-opacity duration-500 flex flex-col items-center justify-center">
+        <div class="bg-orb-1"></div>
+        <div class="animar-logo relative w-48 h-48 flex justify-center items-center mb-6">
+            <div class="absolute inset-0 rounded-full border-[3px] border-white/5 border-t-[var(--c-brand-light)] animate-spin"></div>
+            <img src="fotos/logo.png" alt="LF Turma Sábado" class="w-40 h-40 object-contain rounded-full shadow-[0_0_50px_rgba(139,163,96,0.3)]">
+        </div>
+        <div class="animar-texto text-center px-4">
+            <h1 class="text-5xl font-teko text-brand tracking-widest uppercase text-shadow-md">LF Turma Sábado</h1>
+        </div>
+    </div>
+
+    <!-- CABEÇALHO -->
+    <header class="glass-panel rounded-none border-t-0 border-l-0 border-r-0 border-b border-white/5 sticky top-0 z-10">
+        <div class="max-w-3xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="fotos/logo.png" alt="Logo do Grupo" class="w-10 h-10 object-contain rounded-full border border-white/10 shadow-md">
+                <h1 class="text-2xl font-teko text-white tracking-widest uppercase mt-1">LF Sábado</h1>
+            </div>
+            <div class="text-xs font-bold text-zinc-300 bg-black/40 px-3 py-1.5 rounded border border-white/5 uppercase tracking-widest shadow-inner">
+                <span id="contador-presentes" class="text-brand text-sm drop-shadow-md">0</span> Presentes
+            </div>
+        </div>
+    </header>
+
+    <!-- TAB 1: SORTEIO -->
+    <main id="tab-sorteio" class="flex-grow max-w-3xl mx-auto w-full px-4 py-6 space-y-8 block relative z-10">
+        <div class="flex gap-4">
+            <button id="btn-sortear" onclick="iniciarSorteio()" class="flex-1 btn-primary py-3 rounded-lg active:scale-95 transition-all text-2xl font-teko uppercase tracking-wider flex items-center justify-center gap-2">
+                <i class="fa-solid fa-shuffle text-xl opacity-80"></i> Sortear Times
+            </button>
+        </div>
+
+        <div id="loading-sorteio" class="hidden text-center py-12 glass-panel">
+            <div class="relative flex justify-center items-center mb-6 mx-auto w-32 h-32">
+                <div class="absolute inset-0 rounded-full border-[3px] border-white/5 border-t-[var(--c-brand-light)] animate-spin"></div>
+                <img src="fotos/logo.png" alt="Sorteando..." class="w-24 h-24 object-contain rounded-full">
+            </div>
+            <h2 class="text-3xl font-teko uppercase tracking-widest text-brand mt-4 drop-shadow-md">Balanceando Times</h2>
+        </div>
+
+        <div id="resultado-section" class="hidden space-y-6">
+            <div class="flex justify-between items-end">
+                <h2 class="text-3xl font-teko uppercase tracking-widest text-white drop-shadow-md">Times Formados</h2>
+                <div class="flex gap-2">
+                    <button onclick="desfazerSorteio()" class="text-sm bg-black/40 border border-red-500/30 text-red-500 hover:bg-red-500/20 px-3 py-2 rounded font-bold flex items-center transition-colors shadow-lg" title="Desfazer Sorteio">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                    <button onclick="copiarParaWhatsApp()" class="text-sm bg-brand-translucent border border-brand text-brand hover:bg-[var(--c-brand)] hover:text-white px-3 py-2 rounded font-bold uppercase tracking-wider flex items-center gap-2 transition-colors shadow-lg" title="Copiar Texto">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Copiar
+                    </button>
+                </div>
+            </div>
+            <div id="times-container" class="space-y-4"></div>
+            <hr class="border-white/10 my-8">
+        </div>
+
+        <section id="lista-jogadores-section">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-teko uppercase tracking-widest text-white drop-shadow-md mt-1">Jogadores (<span id="total-jogadores">0</span>)</h2>
+                <div class="flex gap-2 flex-wrap justify-end">
+                    <button onclick="adicionarPlayer()" class="text-brand text-xs font-bold uppercase tracking-wider hover:bg-white/10 flex items-center gap-1 bg-black/40 px-3 py-2 rounded border border-white/10 transition-colors shadow-lg">
+                        <i class="fa-solid fa-user-plus opacity-80"></i> Player
+                    </button>
+                    <button onclick="selecionarTodos()" class="text-white text-xs font-bold uppercase tracking-wider hover:bg-white/10 flex items-center gap-1 bg-black/40 px-3 py-2 rounded border border-white/10 transition-colors shadow-lg">
+                        <i class="fa-solid fa-check-double opacity-80"></i> Todos
+                    </button>
+                </div>
+            </div>
+            <div id="lista-jogadores" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+        </section>
+    </main>
+
+    <!-- TAB 2: PARTIDA COMPACTA (SEM PLACAR) -->
+    <main id="tab-partida" class="flex-grow max-w-3xl mx-auto w-full px-4 py-6 space-y-5 hidden flex-col relative z-10">
+        <div class="glass-panel p-6 text-center flex flex-col items-center shadow-2xl">
+            <h2 class="text-zinc-400 font-bold mb-2 uppercase tracking-widest text-sm">Tempo de Jogo</h2>
+            <div class="placar-led rounded-xl py-4 mb-6 mx-auto w-full max-w-[280px]">
+                <div id="cronometro-display" class="text-[6rem] led-text tabular-nums tracking-tighter">07:00</div>
+            </div>
+            
+            <div class="w-full flex justify-center mb-2">
+                <button onclick="toggleCronometro()" id="btn-cronometro" class="w-full max-w-[320px] btn-primary py-3.5 rounded-lg font-teko text-3xl uppercase tracking-wider active:scale-95 transition-all flex justify-center items-center shadow-lg">
+                    <i class="fa-solid fa-play mr-3 text-2xl opacity-80"></i> Iniciar
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-panel p-5 flex flex-col gap-4">
+            <button onclick="abrirModalGol()" class="w-full bg-white/5 text-brand border border-white/10 hover:bg-[var(--c-brand)] hover:text-white py-3.5 rounded-lg font-teko text-3xl uppercase tracking-widest transition-colors shadow-lg flex justify-center items-center">
+                <i class="fa-solid fa-futbol mr-3 opacity-80"></i> Marcar Gol
+            </button>
+
+            <button onclick="zerarCronometroManualmente()" class="w-full bg-black/40 py-3 rounded-lg font-teko text-2xl uppercase tracking-widest text-red-500 hover:bg-red-500/20 active:scale-95 transition-all border border-red-500/20 hover:border-red-500/50 shadow-md flex justify-center items-center">
+                <i class="fa-solid fa-rotate-right mr-3 opacity-80"></i> Reiniciar Cronômetro
+            </button>
+        </div>
+    </main>
+
+    <!-- TAB 3: ARTILHARIA -->
+    <main id="tab-artilharia" class="flex-grow max-w-3xl mx-auto w-full px-4 py-6 space-y-4 hidden relative z-10">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl font-teko uppercase tracking-widest text-brand drop-shadow-md">Artilharia do Sábado</h2>
+            <p class="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-5">Reset automático à meia-noite</p>
+            
+            <div class="flex justify-center gap-3 flex-wrap">
+                <button onclick="copiarArtilharia()" class="text-xs uppercase tracking-wider bg-brand-translucent border border-brand text-brand hover:bg-[var(--c-brand)] hover:text-white px-4 py-2.5 rounded font-bold inline-flex items-center gap-2 transition-colors shadow-lg">
+                    <i class="fa-brands fa-whatsapp text-lg opacity-80"></i> Copiar
+                </button>
+                <button onclick="zerarArtilharia()" class="text-xs uppercase tracking-wider bg-black/40 text-red-500 hover:bg-red-500/20 border border-red-500/30 px-4 py-2.5 rounded font-bold inline-flex items-center gap-2 transition-colors shadow-lg">
+                    <i class="fa-solid fa-trash-can opacity-80"></i> Zerar
+                </button>
+            </div>
+        </div>
+        <div id="lista-artilheiros" class="space-y-3 pb-2"></div>
+    </main>
+
+    <!-- Modais -->
+    <div id="modal-gol" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex-col items-center justify-end sm:justify-center p-4">
+        <div class="glass-panel w-full max-w-md overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center shrink-0 bg-black/40">
+                <h3 class="font-teko text-2xl uppercase tracking-widest text-brand mt-1 drop-shadow-md">Quem marcou o gol?</h3>
+                <button onclick="fecharModalGol()" class="text-zinc-500 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <div class="p-3 shrink-0 border-b border-white/5">
+                <input type="text" id="busca-jogador-gol" placeholder="Buscar jogador..." onkeyup="filtrarJogadoresGol()" class="w-full bg-black/50 border border-white/10 rounded p-3 text-white placeholder-zinc-500 font-bold focus:outline-none focus:border-[var(--c-brand-light)] shadow-inner">
+            </div>
+            <div id="modal-jogadores-lista" class="p-3 overflow-y-auto space-y-2 flex-grow"></div>
+        </div>
+    </div>
+
+    <div id="modal-sub-sorteio" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex-col items-center justify-end sm:justify-center p-4">
+        <div class="glass-panel w-full max-w-md overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center shrink-0 bg-black/40">
+                <h3 id="titulo-modal-sub-sorteio" class="font-teko text-2xl uppercase tracking-widest text-brand mt-1 drop-shadow-md">Substituir Jogador</h3>
+                <button onclick="fecharModalSubSorteio()" class="text-zinc-500 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <div id="modal-sub-sorteio-lista" class="p-3 overflow-y-auto space-y-2 flex-grow"></div>
+        </div>
+    </div>
+
+    <!-- NAVEGAÇÃO INFERIOR -->
+    <nav class="glass-panel rounded-none border-b-0 border-l-0 border-r-0 border-t border-white/10 fixed bottom-0 w-full z-40">
+        <div class="max-w-3xl mx-auto flex justify-around">
+            <button onclick="mudarAba('sorteio')" id="nav-sorteio" class="flex-1 py-3 flex flex-col items-center text-brand font-bold transition-colors">
+                <i class="fa-solid fa-users text-lg mb-1 drop-shadow-md"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Sorteio</span>
+            </button>
+            <button onclick="mudarAba('partida')" id="nav-partida" class="flex-1 py-3 flex flex-col items-center text-zinc-500 font-bold hover:text-white transition-colors">
+                <i class="fa-solid fa-stopwatch text-lg mb-1"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Partida</span>
+            </button>
+            <button onclick="mudarAba('artilharia')" id="nav-artilharia" class="flex-1 py-3 flex flex-col items-center text-zinc-500 font-bold hover:text-white transition-colors">
+                <i class="fa-solid fa-trophy text-lg mb-1"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Estatísticas</span>
+            </button>
+        </div>
+    </nav>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('PWA: Service Worker rodando!'))
+                    .catch(err => console.log('PWA: Erro no SW', err));
+            });
+        }
+    </script>
+</body>
+</html>
