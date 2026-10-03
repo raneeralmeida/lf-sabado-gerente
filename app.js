@@ -211,6 +211,8 @@ function togglePresenca(id) {
         if (timesSorteadosGlobal.length > 0) {
             if (!estavaPresente && jogador.presente) {
                 alocarJogadorAtrasado(jogador);
+                // Atrasado confirmado depois do sorteio também conta presença no dia
+                lfSyncEnviar('/presencas', { jogadores_ids: [jogador.id] });
             } else if (estavaPresente && !jogador.presente) {
                 removerJogadorSorteado(jogador.id);
             }
@@ -377,6 +379,9 @@ function sortearImparcial(presentes) {
     renderTimes(timesSorteadosGlobal);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     salvarBackup();
+
+    // Sync: registra no servidor quem compareceu (IDs de quem foi sorteado)
+    lfSyncEnviar('/presencas', { jogadores_ids: times.flatMap(t => t.jogadores.map(j => j.id)) });
 }
 
 function renderTimes(times) {
