@@ -435,3 +435,37 @@ test('toggle ANTES do sorteio (times vazios) nao envia nada', async () => {
   const presenca = fetchCalls.find((c) => String(c.url).endsWith('/presencas'));
   assert.equal(presenca, undefined, 'sem sorteio = sem POST (sorteio enviara todos)');
 });
+
+// --- Vista Geral: cards incluem numero de partidas --------------------------
+
+test('vista geral propaga partidas alem de presencas e media', async () => {
+  // testa a propagacao real via app.js: lfSyncArtilhariaGeral faz fetch + monta
+  // o cache com partidas/presencas/media_gols vindos do servidor
+  const fetchImpl = async (url) => {
+    if (url.endsWith('/estado')) {
+      return jsonResp({
+        ok: true, partida: null, jogadores: [], gols: [],
+        artilharia: [
+          { id: '4', nome: 'Eduardo Bolívia', foto: 'x', gols: 23, partidas: 6, presencas: 7, media_gols: 3.29 },
+          { id: '29', nome: 'Felipe Sha.', foto: 'x', gols: 20, partidas: 5, presencas: 5, media_gols: 4 },
+        ],
+        artilharia_hoje: [],
+      });
+    }
+    return jsonResp({ ok: true, jogadores: [], artilharia: [], artilharia_hoje: [] });
+  };
+  const { world } = carregarApp({
+    fetchImpl,
+    storageInitial: { lfSyncEndpoint: 'https://lf.example.com' },
+  });
+  // espera o boot hidratar (boot chama lfSyncCarregarArtilharia no caminho do sync)
+  // mas isso eh a vista do dia — a Geral eh via lfSyncArtilhariaGeral, que o poll dispara
+  await new Promise((r) => setTimeout(r, 20));
+  // forca refresh do cache da Geral via a funcao do app (sem stub)
+  world.artilhariaGeralCache = null;
+  const cache = await world.lfSyncArtilhariaGeral();
+  assert.equal(cache.length, 2, '2 jogadores no cache');
+  assert.equal(cache[0].partidas, 6, 'partidas vem do servidor');
+  assert.equal(cache[0].presencas, 7);
+  assert.equal(cache[0].media_gols, 3.29);
+});

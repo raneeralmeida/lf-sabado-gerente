@@ -821,11 +821,16 @@ function renderListaArtilheiros(arrayArtilheiros) {
                 <span class="font-bold text-white text-lg">${jogador.nome}</span>
             </div>
             <div class="flex items-center gap-3">
-                ${medalha}
-                <div class="bg-[var(--c-brand)] border border-white/10 text-white font-teko w-10 h-10 rounded text-center leading-[40px] text-[32px] shadow-[0_0_15px_rgba(139,163,96,0.2)]">
-                    ${jogador.gols}
-                </div>
-            </div>
+                            ${medalha}
+                            ${jogador.partidas !== undefined ? `
+                            <div class="text-right leading-tight mr-1" title="Partidas com gol · Presenças · Média de gols por pelada comparecida">
+                                <div class="font-teko text-zinc-300 text-[18px] leading-none">${jogador.partidas}J <span class="text-zinc-500">·</span> ${jogador.presencas || 0}x <span class="text-zinc-500">·</span> ${jogador.media_gols !== null ? jogador.media_gols + '/j' : '–'}</div>
+                            </div>
+                            ` : ''}
+                            <div class="bg-[var(--c-brand)] border border-white/10 text-white font-teko w-10 h-10 rounded text-center leading-[40px] text-[32px] shadow-[0_0_15px_rgba(139,163,96,0.2)]">
+                                ${jogador.gols}
+                            </div>
+                        </div>
         `;
         container.appendChild(div);
     });
@@ -1117,13 +1122,20 @@ async function lfSyncArtilhariaGeral() {
         const dados = await resp.json();
         if (!dados.ok) return null;
         artilhariaGeralCache = (dados.artilharia || [])
-            .filter(a => a.gols > 0)
-            .map(a => {
-                // Foto: prioriza a.foto do servidor; fallback no jogador local
-                const idNum = parseInt(a.id, 10);
-                const jogador = jogadoresData.find(j => j.id === idNum);
-                return { nome: a.nome, gols: a.gols, foto: a.foto || (jogador ? jogador.foto : '') };
-            });
+                    .filter(a => a.gols > 0)
+                    .map(a => {
+                        // Foto: prioriza a.foto do servidor; fallback no jogador local
+                        const idNum = parseInt(a.id, 10);
+                        const jogador = jogadoresData.find(j => j.id === idNum);
+                        return {
+                            nome: a.nome,
+                            gols: a.gols,
+                            foto: a.foto || (jogador ? jogador.foto : ''),
+                            partidas: a.partidas ?? 0,
+                            presencas: a.presencas ?? 0,
+                            media_gols: a.media_gols ?? null,
+                        };
+                    });
         return artilhariaGeralCache;
     } catch (err) {
         return null;
