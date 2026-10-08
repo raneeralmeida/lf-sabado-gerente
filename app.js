@@ -46,9 +46,9 @@ let jogadoresData = [
     { id: 45, nome: "Miné", posicao: "linha", presente: false, foto: "fotos/mine.jpg" },
     { id: 46, nome: "Túlio Mor.", posicao: "linha", presente: false, foto: "fotos/tulio_mor.jpg" },
     { id: 47, nome: "Yuri Vit.", posicao: "linha", presente: false, foto: "fotos/yuri_vit.jpg" },
-    { id: 48, nome: "Marcelo Mam.", posicao: "linha", presente: false },
-    { id: 54, nome: "Leandro Bar.", posicao: "linha", presente: false },
-    { id: 55, nome: "Arthur Lin.", posicao: "linha", presente: false },
+    { id: 48, nome: "Marcelo Mam.", posicao: "goleiro", presente: false, foto: "fotos/marcelo_mam.jpg" },
+    { id: 54, nome: "Leandro Bar.", posicao: "linha", presente: false, foto: "fotos/leandro_bar.jpg" },
+    { id: 55, nome: "Arthur Lin.", posicao: "linha", presente: false, foto: "fotos/arthur_lin.jpg" },
     { id: 56, nome: "Heitor", posicao: "linha", presente: false, foto: "fotos/heitor.jpg" }
 ];
 
