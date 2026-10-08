@@ -435,3 +435,24 @@ test('toggle ANTES do sorteio (times vazios) nao envia nada', async () => {
   const presenca = fetchCalls.find((c) => String(c.url).endsWith('/presencas'));
   assert.equal(presenca, undefined, 'sem sorteio = sem POST (sorteio enviara todos)');
 });
+
+
+// --- Lista de atletas: Raneer pediu Marcelo, Leandro Bar., Arthur Lin. ----
+
+test('jogadoresData inclui Marcelo, Leandro Bar., Arthur Lin.', async () => {
+  const { world } = carregarApp();
+  // vm sandboxes `let` no contexto mas a funcao carregarApp retorna o array
+  // atribuido via hidratacao em carregarBackup — vamos pelo fetch mockado
+  // do /estado que o boot usa para hidratar jogadoresData.
+  const ids = world._lastHydratedJogadores?.map(j => j.id) || [];
+  const nomes = world._lastHydratedJogadores?.map(j => j.nome) || [];
+  // fallback: o array original esta em app.js — checa direto via leitura
+  const fs = await import('node:fs');
+  const src = fs.readFileSync('app.js', 'utf8');
+  const match = src.match(/let jogadoresData = \[([\s\S]*?)\];/);
+  assert.ok(match, 'array jogadoresData presente em app.js');
+  const linhas = match[1].split('\n').filter(l => l.includes('id:'));
+  for (const n of ['Marcelo', 'Leandro Bar.', 'Arthur Lin.']) {
+    assert.ok(linhas.some(l => l.includes(`nome: "${n}"`)), `${n} esta na lista`);
+  }
+});
