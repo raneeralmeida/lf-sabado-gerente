@@ -2,7 +2,7 @@ let jogadoresData = [
     { id: 1, nome: "Râneer", posicao: "linha", presente: false, foto: "fotos/raneer.jpg" },
     { id: 2, nome: "Alex Vie.", posicao: "linha", presente: false, foto: "fotos/alex_vie.jpg" },
     { id: 3, nome: "Kaique Fer.", posicao: "linha", presente: false, foto: "fotos/kaique_fer.jpg" },
-    { id: 4, nome: "Eduardo Bolívia", posicao: "linha", presente: false, foto: "fotos/eduardo_bol.jpg" },
+    { id: 4, nome: "Eduardo Bol.", posicao: "linha", presente: false, foto: "fotos/eduardo_bol.jpg" },
     { id: 5, nome: "Michel", posicao: "linha", presente: false, foto: "fotos/michel.jpg" },
     { id: 6, nome: "Kaique Mar.", posicao: "linha", presente: false, foto: "fotos/kaique_mar.jpg" },
     { id: 7, nome: "Pé de Pano", posicao: "linha", presente: false, foto: "fotos/pe_de_pano.jpg" },
@@ -47,11 +47,9 @@ let jogadoresData = [
     { id: 46, nome: "Túlio Mor.", posicao: "linha", presente: false, foto: "fotos/tulio_mor.jpg" },
     { id: 47, nome: "Yuri Vit.", posicao: "linha", presente: false, foto: "fotos/yuri_vit.jpg" },
     { id: 48, nome: "Marcelo Mam.", posicao: "linha", presente: false },
-    { id: 51, nome: "Lino", posicao: "linha", presente: false },
-    { id: 52, nome: "Leandro", posicao: "linha", presente: false },
-    { id: 53, nome: "Marcelo", posicao: "linha", presente: false },
     { id: 54, nome: "Leandro Bar.", posicao: "linha", presente: false },
     { id: 55, nome: "Arthur Lin.", posicao: "linha", presente: false },
+    { id: 56, nome: "Heitor", posicao: "linha", presente: false, foto: "fotos/heitor.jpg" }
 ];
 
 let timesSorteadosGlobal = [];
