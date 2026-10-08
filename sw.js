@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lf-turma-sabado-v32';
+const CACHE_NAME = 'lf-turma-sabado-v33';
 
 // Arquivos que o app precisa baixar na primeira vez para funcionar offline
 const urlsToCache = [
@@ -53,6 +53,18 @@ self.addEventListener('fetch', event => {
                     // Impede o cache de requisições que deram erro ou são de extensões
                     if(!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
                         return fetchResponse;
+                    }
+
+                    // NÃO cacheia fotos de jogador (/fotos/* que não são logo ou icon)
+                    // em runtime: o usuário acaba de receber uma atualização do app,
+                    // e cachear aqui prende a foto antiga mesmo com o app.js novo.
+                    // O servidor já serve com cache HTTP 7d, suficiente.
+                    const url = new URL(event.request.url);
+                    if (url.pathname.startsWith('/lf-sabado-gerente/fotos/')) {
+                        const arq = url.pathname.split('/').pop();
+                        if (arq !== 'logo.png' && arq !== 'apple-touch-icon.png') {
+                            return fetchResponse;
+                        }
                     }
 
                     // Clona a resposta para salvar no cache e entregar para o app
