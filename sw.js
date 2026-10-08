@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lf-turma-sabado-v35';
+const CACHE_NAME = 'lf-turma-sabado-v36';
 
 // Arquivos que o app precisa baixar na primeira vez para funcionar offline
 const urlsToCache = [
@@ -59,8 +59,13 @@ self.addEventListener('fetch', event => {
                     // em runtime: o usuário acaba de receber uma atualização do app,
                     // e cachear aqui prende a foto antiga mesmo com o app.js novo.
                     // O servidor já serve com cache HTTP 7d, suficiente.
+                    // Detecta tanto no path do PWA (/lf-sabado-gerente/fotos/*) quanto
+                    // cross-origin (https://lf.felipeteodoro.dev/fotos/*).
                     const url = new URL(event.request.url);
-                    if (url.pathname.startsWith('/lf-sabado-gerente/fotos/')) {
+                    const isPwaFoto = url.pathname.startsWith('/lf-sabado-gerente/fotos/');
+                    const isApiFoto = url.hostname === 'lf.felipeteodoro.dev'
+                                      && url.pathname.startsWith('/fotos/');
+                    if (isPwaFoto || isApiFoto) {
                         const arq = url.pathname.split('/').pop();
                         if (arq !== 'logo.png' && arq !== 'apple-touch-icon.png') {
                             return fetchResponse;
