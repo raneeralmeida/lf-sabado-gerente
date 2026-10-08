@@ -93,6 +93,15 @@ function getAvatarUrl(nome) {
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=141416&color=8ba360&bold=true`;
 }
 
+// Cache-buster nas URLs de foto. Bumpa junto com o sw.js pra forçar
+// o navegador a re-baixar a foto (quebra qualquer cache HTTP do Chrome
+// que tenha prendado uma resposta 404 antiga).
+const FOTOS_VERSION = '35';
+function fotoUrl(path) {
+    if (!path) return path;
+    return path + '?v=' + FOTOS_VERSION;
+}
+
 function salvarBackup() {
     const backup = {
         jogadoresData,
@@ -191,7 +200,7 @@ function renderLista() {
         const badgeText = jogador.posicao === 'goleiro' ? 'Goleiro' : 'Linha';
 
         card.innerHTML = `
-            <img src="${jogador.foto}" onerror="this.onerror=null; this.src=getAvatarUrl('${jogador.nome}')" alt="${jogador.nome}" class="w-10 h-10 object-cover rounded-md mr-3 border border-white/10 bg-black/50">
+            <img src="\${fotoUrl(jogador.foto)}" onerror="this.onerror=null; this.src=getAvatarUrl('${jogador.nome}')" alt="${jogador.nome}" class="w-10 h-10 object-cover rounded-md mr-3 border border-white/10 bg-black/50">
             <div class="flex flex-col flex-1 overflow-hidden">
                 <span class="font-bold text-sm leading-tight truncate text-white">${jogador.nome}</span>
                 <span class="position-badge border px-1.5 py-[1px] rounded mt-1 w-max ${badgeColor}">${badgeText}</span>
@@ -422,7 +431,7 @@ function renderTimes(times) {
             li.innerHTML = `
                 <div class="flex items-center gap-3 flex-1 overflow-hidden">
                     ${iconePosicao}
-                    <img src="${j.foto}" onerror="this.onerror=null; this.src=getAvatarUrl('${j.nome}')" class="w-8 h-8 object-cover rounded-md border border-white/10 bg-black/50 shrink-0 shadow-md">
+                    <img src="\${fotoUrl(j.foto)}" onerror="this.onerror=null; this.src=getAvatarUrl('${j.nome}')" class="w-8 h-8 object-cover rounded-md border border-white/10 bg-black/50 shrink-0 shadow-md">
                     <span class="font-bold text-white truncate">${j.nome}</span>
                 </div>
                 <div class="flex gap-1 shrink-0 btn-config-time">
@@ -487,7 +496,7 @@ function abrirModalSubSorteio(timeIndex, jogadorSaindoId = null) {
             const btn = document.createElement('button');
             btn.className = "w-full text-left p-3 mb-2 bg-black/40 hover:bg-white/10 rounded border border-white/5 hover:border-[var(--c-brand-light)] font-bold text-white transition-colors flex items-center gap-3";
             btn.innerHTML = `
-                <img src="${j.foto}" onerror="this.onerror=null; this.src=getAvatarUrl('${j.nome}')" class="w-8 h-8 object-cover rounded-md bg-black/80 border border-white/10">
+                <img src="\${fotoUrl(j.foto)}" onerror="this.onerror=null; this.src=getAvatarUrl('${j.nome}')" class="w-8 h-8 object-cover rounded-md bg-black/80 border border-white/10">
                 ${j.nome}
             `;
             btn.onclick = () => efetivarSubSorteio(j.id);
@@ -651,7 +660,7 @@ function renderGolsPartida() {
         const item = document.createElement('div');
         item.className = 'flex items-center gap-3 bg-black/40 border border-white/5 rounded p-2.5';
         item.innerHTML = `
-            <img src="${gol.foto}" onerror="this.onerror=null; this.src=getAvatarUrl('${gol.nome}')" class="w-9 h-9 object-cover rounded-md bg-black/80 border border-white/10 shrink-0">
+            <img src="\${fotoUrl(gol.foto)}" onerror="this.onerror=null; this.src=getAvatarUrl('${gol.nome}')" class="w-9 h-9 object-cover rounded-md bg-black/80 border border-white/10 shrink-0">
             <span class="font-bold text-white truncate flex-grow">${gol.nome}</span>
             <span class="led-text text-brand text-lg tabular-nums shrink-0">${gol.minuto}'</span>
         `;
@@ -695,7 +704,7 @@ function renderListaJogadoresModal(lista) {
         const btn = document.createElement('button');
         btn.className = "jogador-item-modal w-full text-left p-3 mb-2 bg-black/40 hover:bg-white/10 rounded border border-white/5 hover:border-[var(--c-brand-light)] font-bold text-white transition-colors flex items-center gap-3";
         btn.innerHTML = `
-            <img src="${j.foto}" onerror="this.onerror=null; this.src=getAvatarUrl('${j.nome}')" class="w-8 h-8 object-cover rounded-md bg-black/80 border border-white/10">
+            <img src="\${fotoUrl(j.foto)}" onerror="this.onerror=null; this.src=getAvatarUrl('${j.nome}')" class="w-8 h-8 object-cover rounded-md bg-black/80 border border-white/10">
             <span class="nome-jogador">${j.nome}</span>
         `;
         btn.onclick = () => registrarGol(j.id, j.nome);
@@ -834,7 +843,7 @@ function renderListaArtilheiros(arrayArtilheiros) {
         div.innerHTML = `
             <div class="flex items-center gap-4">
                 <span class="font-black text-zinc-500 w-4">${colocacao}º</span>
-                <img src="${jogador.foto}" onerror="this.onerror=null; this.src=getAvatarUrl('${jogador.nome}')" class="w-12 h-12 object-cover rounded-md border border-white/10 bg-black/50 shadow-md">
+                <img src="\${fotoUrl(jogador.foto)}" onerror="this.onerror=null; this.src=getAvatarUrl('${jogador.nome}')" class="w-12 h-12 object-cover rounded-md border border-white/10 bg-black/50 shadow-md">
                 <div class="flex flex-col">
                     <span class="font-bold text-white text-lg leading-tight">${jogador.nome}</span>
                     ${stats}
