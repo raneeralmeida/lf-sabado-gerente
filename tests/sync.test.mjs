@@ -456,3 +456,41 @@ test('jogadoresData inclui Marcelo, Leandro Bar., Arthur Lin.', async () => {
     assert.ok(linhas.some(l => l.includes(`nome: "${n}"`)), `${n} esta na lista`);
   }
 });
+
+
+// --- PR #28: artilharia geral mostra partidas/presenças/média ---------
+
+test('cache do geral propaga partidas/presencas vindos do servidor', async () => {
+  const { world } = carregarApp({
+    storageInitial: { lfSyncEndpoint: 'https://lf.exemplo.dev' },
+    fetchImpl: async () => jsonResp(ESTADO_OK([
+      { id: '4', nome: 'Eduardo Bolívia', posicao: 'linha', gols: 23, partidas: 6, presencas: 7 },
+      { id: '29', nome: 'Felipe Sha.', posicao: 'linha', gols: 20, partidas: 5, presencas: 5 },
+    ])),
+  });
+
+  const geral = await world.lfSyncArtilhariaGeral();
+  const edu = geral.find(a => a.nome === 'Eduardo Bolívia');
+  assert.equal(edu.partidas, 6);
+  assert.equal(edu.presencas, 7);
+  // média esperada: 23 / 7 = 3.29
+  const eduMedia = (edu.gols / edu.presencas).toFixed(2);
+  assert.equal(eduMedia, '3.29');
+
+  const feli = geral.find(a => a.nome === 'Felipe Sha.');
+  assert.equal(feli.partidas, 5);
+  assert.equal(feli.presencas, 5);
+});
+
+test('cache do geral sem partidas/presencas no servidor: campos null', async () => {
+  // Caso de retrocompatibilidade: servidor antigo devolve só {id,nome,gols,foto}
+  const { world } = carregarApp({
+    storageInitial: { lfSyncEndpoint: 'https://lf.exemplo.dev' },
+    fetchImpl: async () => jsonResp(ESTADO_OK([
+      { id: '1', nome: 'Râneer', posicao: 'linha', gols: 9 },
+    ])),
+  });
+  const geral = await world.lfSyncArtilhariaGeral();
+  assert.equal(geral[0].partidas, null, 'servidor sem campo -> null no cliente');
+  assert.equal(geral[0].presencas, null);
+});

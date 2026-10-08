@@ -803,7 +803,8 @@ function renderArtilharia() {
     renderListaArtilheiros(Object.values(artilharia).sort((a, b) => b.gols - a.gols));
 }
 
-// Render comum das duas vistas: array de {nome, gols, foto?}
+// Render comum das duas vistas: array de {nome, gols, foto?, partidas?, presencas?}
+// partidas/presencas são opcionais: só vêm na vista Geral (do servidor).
 function renderListaArtilheiros(arrayArtilheiros) {
     const container = document.getElementById('lista-artilheiros');
     if(!container) return;
@@ -818,13 +819,28 @@ function renderListaArtilheiros(arrayArtilheiros) {
         else if (colocacao === 3) medalha = '<i class="fa-solid fa-medal text-amber-600 text-2xl drop-shadow-md"></i>';
         else medalha = '<span class="text-zinc-600 font-teko text-2xl mr-2">' + colocacao + 'º</span>';
 
+        // Estatísticas históricas: só renderiza na vista Geral, onde
+        // partidas/presencas vêm do servidor. Hoje não tem esse dado.
+        let stats = '';
+        if (jogador.partidas != null && jogador.presencas != null) {
+            const media = jogador.presencas > 0
+                ? (jogador.gols / jogador.presencas).toFixed(2)
+                : '0.00';
+            stats = `<span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5">`
+                  + `${jogador.partidas}J · ${jogador.presencas}x · ${media}/j`
+                  + `</span>`;
+        }
+
         const div = document.createElement('div');
         div.className = "glass-panel p-4 flex items-center justify-between";
         div.innerHTML = `
             <div class="flex items-center gap-4">
                 <span class="font-black text-zinc-500 w-4">${colocacao}º</span>
                 <img src="${jogador.foto}" onerror="this.onerror=null; this.src=getAvatarUrl('${jogador.nome}')" class="w-12 h-12 object-cover rounded-md border border-white/10 bg-black/50 shadow-md">
-                <span class="font-bold text-white text-lg">${jogador.nome}</span>
+                <div class="flex flex-col">
+                    <span class="font-bold text-white text-lg leading-tight">${jogador.nome}</span>
+                    ${stats}
+                </div>
             </div>
             <div class="flex items-center gap-3">
                 ${medalha}
@@ -1128,7 +1144,14 @@ async function lfSyncArtilhariaGeral() {
                 // Foto: prioriza a.foto do servidor; fallback no jogador local
                 const idNum = parseInt(a.id, 10);
                 const jogador = jogadoresData.find(j => j.id === idNum);
-                return { nome: a.nome, gols: a.gols, foto: a.foto || (jogador ? jogador.foto : '') };
+                return {
+                    nome: a.nome,
+                    gols: a.gols,
+                    foto: a.foto || (jogador ? jogador.foto : ''),
+                    // Estatísticas históricas (só renderizadas na vista Geral)
+                    partidas: a.partidas ?? null,
+                    presencas: a.presencas ?? null,
+                };
             });
         return artilhariaGeralCache;
     } catch (err) {
