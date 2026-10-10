@@ -437,9 +437,9 @@ test('toggle ANTES do sorteio (times vazios) nao envia nada', async () => {
 });
 
 
-// --- Lista de atletas: Raneer pediu Marcelo, Leandro Bar., Arthur Lin. ----
+// --- Lista de atletas: Raneer pediu Marcelo Mam., Leandro Bar., Arthur Lin. ----
 
-test('jogadoresData inclui Marcelo, Leandro Bar., Arthur Lin.', async () => {
+test('jogadoresData inclui Marcelo Mam., Leandro Bar., Arthur Lin.', async () => {
   const { world } = carregarApp();
   // vm sandboxes `let` no contexto mas a funcao carregarApp retorna o array
   // atribuido via hidratacao em carregarBackup — vamos pelo fetch mockado
@@ -452,7 +452,7 @@ test('jogadoresData inclui Marcelo, Leandro Bar., Arthur Lin.', async () => {
   const match = src.match(/let jogadoresData = \[([\s\S]*?)\];/);
   assert.ok(match, 'array jogadoresData presente em app.js');
   const linhas = match[1].split('\n').filter(l => l.includes('id:'));
-  for (const n of ['Marcelo', 'Leandro Bar.', 'Arthur Lin.']) {
+  for (const n of ['Marcelo Mam.', 'Leandro Bar.', 'Arthur Lin.']) {
     assert.ok(linhas.some(l => l.includes(`nome: "${n}"`)), `${n} esta na lista`);
   }
 });
